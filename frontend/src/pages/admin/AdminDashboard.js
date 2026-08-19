@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { FiPackage, FiDollarSign, FiShoppingCart, FiClock } from 'react-icons/fi';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
@@ -13,20 +14,19 @@ const AdminDashboard = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  
 
   useEffect(() => {
-    fetchStats();
-  }, []);
-
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem('token');
+
       const response = await axios.get(`${API_URL}/admin/stats`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
       setStats(response.data);
       setLoading(false);
     } catch (error) {
@@ -34,6 +34,9 @@ const AdminDashboard = () => {
       setLoading(false);
     }
   };
+
+  fetchStats();
+}, []);
 
   if (loading) {
     return <div className="text-center py-12">Loading...</div>;

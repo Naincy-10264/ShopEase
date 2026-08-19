@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchOrder } from '../store/slices/orderSlice';
-import { FiPackage, FiDownload, FiMapPin } from 'react-icons/fi';
+import { FiDownload, FiMapPin } from 'react-icons/fi';
 import axios from 'axios';
 
 const OrderDetail = () => {

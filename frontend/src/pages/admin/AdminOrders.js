@@ -1,35 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { FiEdit, FiEye } from 'react-icons/fi';
+import { FiEye } from 'react-icons/fi';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
+  const fetchOrders = useCallback(async () => {
+  try {
+    const token = localStorage.getItem('token');
 
-  const fetchOrders = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${API_URL}/admin/orders`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setOrders(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error('Failed to fetch orders', error);
-      toast.error('Failed to fetch orders');
-      setLoading(false);
-    }
-  };
+    const response = await axios.get(`${API_URL}/admin/orders`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    setOrders(response.data);
+    setLoading(false);
+  } catch (error) {
+    console.error('Failed to fetch orders', error);
+    toast.error('Failed to fetch orders');
+    setLoading(false);
+  }
+}, []);
+
+useEffect(() => {
+  fetchOrders();
+}, [fetchOrders]);
 
   const handleStatusUpdate = async (orderId, newStatus) => {
     try {

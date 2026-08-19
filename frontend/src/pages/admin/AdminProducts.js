@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { FiEdit, FiTrash2, FiPlus } from 'react-icons/fi';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -18,28 +19,30 @@ const AdminProducts = () => {
     brand: '',
   });
 
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+  const fetchProducts = useCallback(async () => {
+  try {
+    const token = localStorage.getItem('token');
 
-  const fetchProducts = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${API_URL}/admin/products`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setProducts(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error('Failed to fetch products', error);
-      toast.error('Failed to fetch products');
-      setLoading(false);
-    }
-  };
+    const response = await axios.get(`${API_URL}/admin/products`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    setProducts(response.data);
+    setLoading(false);
+  } catch (error) {
+    console.error('Failed to fetch products', error);
+    toast.error('Failed to fetch products');
+    setLoading(false);
+  }
+}, []);
+
+useEffect(() => {
+  fetchProducts();
+}, [fetchProducts]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
